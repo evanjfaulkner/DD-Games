@@ -2,7 +2,7 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("./utils/")
-from utils_functions import solve_theta_PO, evaluate_test_performative_risk, solve_theta
+from utils_functions import solve_theta_PO, solve_theta_SO, evaluate_test_performative_risk, solve_theta
 
 """
 Class to run a decision dependent game with 2 players
@@ -31,7 +31,7 @@ class DecisionDependentGame(object):
         self.p2_generate_data_func = p2_data_generating_func
         self.p2_data_params = p2_data_params
         cov_x_p2 = self.p2_data_params[0]
-        d2 = len(cov_x_p1)
+        d2 = len(cov_x_p2)
         self.theta_p2 = p2.initialize_theta(d2)
 
         self.num_rounds = num_rounds
@@ -55,6 +55,12 @@ class DecisionDependentGame(object):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
         theta_PO_p1, theta_PO_p2 = solve_theta_PO(mu_p1, mu_p2, gamma_p1, gamma_p2, beta_p1, beta_p2, cov_x_p1, cov_x_p2)
         return theta_PO_p1, theta_PO_p2
+    
+    def solve_social_opt(self):
+        cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
+        cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
+        theta_SO_p1, theta_SO_p2 = solve_theta_SO(mu_p1, mu_p2, gamma_p1, gamma_p2, beta_p1, beta_p2, cov_x_p1, cov_x_p2)
+        return theta_SO_p1, theta_SO_p2
 
     def evaluate_test_perf_risk_p1(self):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
@@ -63,7 +69,6 @@ class DecisionDependentGame(object):
 
     def evaluate_test_perf_risk_p2(self):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-
         #The ordering between p1 and p2 gets flipped
         mse_avg = evaluate_test_performative_risk(self.p2_generate_data_func, beta_p2, mu_p2, gamma_p2, self.theta_p2, self.theta_p1, cov_x_p2, sigma_y_p2, self.num_test)
         return mse_avg
