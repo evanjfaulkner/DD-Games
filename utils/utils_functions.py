@@ -62,6 +62,11 @@ def solve_theta_PO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_
     theta_PO_2 = A_2 @ B_2
     return theta_PO_1, theta_PO_2
 
+def solve_theta_SO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_2):
+    """
+    Solves for the Soci
+    """
+
 """
 Helpers for TwoStage Player
 """
