@@ -39,7 +39,6 @@ class TwoStagePlayer(object):
         return np.random.normal(size = d)
 
     def perform_estimation_between_stages(self):
-        #TODO Make sure this works for both players and is not sensitive to the order of inputs
         self.mu_hat, self.gamma_hat = solve_distribution_params(self.data_history, self.theta_history, self.theta_other_history)
         return self.mu_hat, self.gamma_hat
 
