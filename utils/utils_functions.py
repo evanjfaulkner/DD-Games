@@ -1,4 +1,5 @@
 import numpy as np
+import ipdb
 
 
 """
@@ -33,8 +34,8 @@ def sample_from_location_family(cov_x, sigma_y, beta, mu, gamma, theta_1, theta_
 Nash and Test PR
 """
 
-def evaluate_test_performative_risk(beta, mu, gamma, theta_p1, theta_p2, cov_x, sigma_y, num_test):
-    test_set = [sample_from_distribution(cov_x, sigma_y, beta, mu, gamma, theta_p1, theta_p2) for e in range(num_test)]
+def evaluate_test_performative_risk(data_generator, beta, mu, gamma, theta_p1, theta_p2, cov_x, sigma_y, num_test):
+    test_set = [data_generator(cov_x, sigma_y, beta, mu, gamma, theta_p1, theta_p2) for e in range(num_test)]
     x_test = np.array([e[0] for e in test_set])
     y_test = [e[1] for e in test_set]
     y_pred = x_test @ theta_p1
@@ -84,9 +85,4 @@ def find_qs(mu_hat, gamma_hat, z_lst, theta_1_lst, theta_2_lst):
         q_lst.append(q)
     return np.array(q_lst)
 
-def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
-    y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(len(q))
-    x_arr = np.array(x_lst)
-    A = x_arr - mu_hat
-    theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
-    return theta
+
