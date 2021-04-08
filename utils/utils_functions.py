@@ -43,21 +43,21 @@ def evaluate_test_performative_risk(data_generator, beta, mu, gamma, theta_p1, t
     mse_avg = mse/len(y_test)
     return mse_avg
 
-def solve_theta_PO(mu_1,mu_2,gamma_1,gamma_2, beta_1,beta_2,Sigma_x):
+def solve_theta_PO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_2):
     """
     Solves for the performative optima/Nash equilibrium of the DD Game
     """
-    mu_Sig_1 = np.outer(mu_1, mu_1) - Sigma_x
-    mu_Sig_2 = np.outer(mu_2, mu_2) - Sigma_x
-    mu_gamma_1 = np.outer(mu_1, gamma_1)
+    mu_Sig_1 = np.linalg.inv(np.outer(mu_1, mu_1) + Sigma_1)
+    mu_Sig_2 = np.linalg.inv(np.outer(mu_2, mu_2) + Sigma_2)
+    mu_gamma_1 = np.outer(mu_1, gamma_1) 
     mu_gamma_2 = np.outer(mu_2, gamma_2)
-    A_1 = np.linalg.inv(mu_Sig_2 @ np.linalg.inv(mu_gamma_1) @ mu_Sig_1 - mu_gamma_2)
-    A_2 = np.linalg.inv(mu_Sig_1 @ np.linalg.inv(mu_gamma_2) @ mu_Sig_2 - mu_gamma_1)
-
-    B_1 = mu_Sig_2 @ np.linalg.inv(mu_gamma_1) @ Sigma_x @ beta_1 - Sigma_x @ beta_2
-    B_2 = mu_Sig_1 @ np.linalg.inv(mu_gamma_2) @ Sigma_x @ beta_2 - Sigma_x @ beta_1
-
-
+    
+    A_1 = np.linalg.inv(np.eye(d) - mu_gamma_1 @ mu_Sig_2 @ mu_gamma_2)
+    A_2 = np.linalg.inv(np.eye(d) - mu_gamma_2 @ mu_Sig_1 @ mu_gamma_1)
+    
+    B_1 = mu_Sig_1 @ (Sigma_1@beta_1 - mu_gamma_1@mu_Sig_2@Sigma_2@beta_2)
+    B_2 = mu_Sig_2 @ (Sigma_2@beta_2 - mu_gamma_2@mu_Sig_1@Sigma_1@beta_1)
+    
     theta_PO_1 = A_1 @ B_1
     theta_PO_2 = A_2 @ B_2
     return theta_PO_1, theta_PO_2
