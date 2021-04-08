@@ -2,7 +2,7 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("./utils/")
-from utils_functions import find_qs, solve_distribution_params
+from utils_functions import find_qs, solve_distribution_params, solve_theta
 
 """
 Player that implements the 3-stage algorithm:
@@ -47,12 +47,12 @@ class TwoStagePlayer(object):
         return np.random.normal(size = d)
 
     def find_qs_after_stage_two(self):
-        qs = find_qs(self.mu_hat, self.gamma_hat, self.data_history, self.theta_history, self.theta_other_history)
-
         num_rounds = len(self.data_history)
         num_first_stage = int(num_rounds/2)
         z_train = self.data_history[num_first_stage:]
         x_lst = [e[0] for e in z_train]
+
+        qs = find_qs(self.mu_hat, self.gamma_hat, self.data_history[num_first_stage:], self.theta_history[num_first_stage:], self.theta_other_history[num_first_stage:])
 
         self.x_train = x_lst
         self.qs = qs

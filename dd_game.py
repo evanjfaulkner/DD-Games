@@ -2,7 +2,7 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("./utils/")
-from utils_functions import solve_theta_PO, evaluate_test_performative_risk
+from utils_functions import solve_theta_PO, evaluate_test_performative_risk, solve_theta
 
 """
 Class to run a decision dependent game with 2 players
@@ -72,8 +72,8 @@ class DecisionDependentGame(object):
 
     def run_post_train_alternating(self):
         for t in range(self.num_alternate_rounds):
-            theta_p1_new = p1.update_theta_without_observations(theta_p2)
-            theta_p2_new  = p2.update_theta_without_observations(theta_p1)
+            theta_p1_new = self.p1.update_theta_without_observations(self.theta_p2)
+            theta_p2_new  = self.p2.update_theta_without_observations(self.theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
 
