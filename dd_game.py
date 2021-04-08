@@ -1,6 +1,8 @@
 import numpy as np
 import ipdb
-from utils import evaluate_test_performative_risk, solve_theta_PO
+import sys
+sys.path.append("./utils/")
+from utils_functions import solve_theta_PO, evaluate_test_performative_risk
 
 """
 Class to run a decision dependent game with 2 players
@@ -21,12 +23,16 @@ class DecisionDependentGame(object):
         self.p1 = p1
         self.p1_generate_data_func = p1_data_generating_func
         self.p1_data_params = p1_data_params
-        self.theta_p1 = None
+        cov_x_p1 = self.p1_data_params[0]
+        d1 = len(cov_x_p1)
+        self.theta_p1 = p1.initialize_theta(d1)
 
         self.p2 = p2
         self.p2_generate_data_func = p2_data_generating_func
         self.p2_data_params = p2_data_params
-        self.theta_p2 = None
+        cov_x_p2 = self.p2_data_params[0]
+        d2 = len(cov_x_p1)
+        self.theta_p2 = p2.initialize_theta(d2)
 
         self.num_rounds = num_rounds
         self.num_test = num_test
@@ -53,12 +59,12 @@ class DecisionDependentGame(object):
 
     def evaluate_test_perf_risk_p1(self):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
-        mse_avg = evaluate_test_performative_risk(beta_p1, mu_p1, gamma_p1, self.theta_p1, self.theta_p2, cov_x_p1, sigma_y_p1, self.num_test)
+        mse_avg = evaluate_test_performative_risk(self.p1_generate_data_func, beta_p1, mu_p1, gamma_p1, self.theta_p1, self.theta_p2, cov_x_p1, sigma_y_p1, self.num_test)
         return mse_avg
 
     def evaluate_test_perf_risk_p2(self):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-        mse_avg = evaluate_test_performative_risk(beta_p2, mu_p2, gamma_p2, self.theta_p1, self.theta_p2, cov_x_p2, sigma_y_p2, self.num_test)
+        mse_avg = evaluate_test_performative_risk(self.p2_generate_data_func, beta_p2, mu_p2, gamma_p2, self.theta_p1, self.theta_p2, cov_x_p2, sigma_y_p2, self.num_test)
         return mse_avg
 
     def run_post_train_alternating(self):
@@ -67,7 +73,6 @@ class DecisionDependentGame(object):
             theta_p2_new  = p2.update_theta_without_observations(theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
-
 
     def run_train(self):
 
@@ -78,9 +83,9 @@ class DecisionDependentGame(object):
             cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
             z_p2 = self.p2_generate_data_func(cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2, self.theta_p1, self.theta_p2)
 
-            theta_p1_new = p1.update_theta_with_observations(t, self.num_rounds, z_p1, theta_p2)
-            theta_p2_new  = p2.update_theta_with_observations(t, self.num_rounds, z_p2, theta_p1)
+            theta_p1_new = self.p1.update_theta_with_observations(t, self.num_rounds, z_p1, self.theta_p2)
+            theta_p2_new  = self.p2.update_theta_with_observations(t, self.num_rounds, z_p2, self.theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
 
-        return theta_p1, theta_p2
+        return self.theta_p1, self.theta_p2
