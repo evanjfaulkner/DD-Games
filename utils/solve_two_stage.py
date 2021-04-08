@@ -14,12 +14,6 @@ def run_first_stage(z_1_lst, z_2_lst, theta_1_lst, theta_2_lst):
 """
 Second stage
 """
-def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
-    y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(len(q))
-    x_arr = np.array(x_lst)
-    A = x_arr - mu_hat
-    theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
-    return theta
 
 def run_second_stage(d_1, d_2, x_1_lst, q_1, x_2_lst, q_2, mu_hat_1,
                      gamma_hat_1, mu_hat_2, gamma_hat_2, num_iter):

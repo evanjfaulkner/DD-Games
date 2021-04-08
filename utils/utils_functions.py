@@ -1,7 +1,6 @@
 import numpy as np
 import ipdb
 
-
 """
 Data
 """
@@ -24,21 +23,22 @@ def obtain_data(n, d_1, d_2, mu_1, gamma_1, mu_2, gamma_2,
         z_2_lst.append(z_2_i)
     return np.array(z_1_lst), np.array(z_2_lst), np.array(theta_1_lst), np.array(theta_2_lst)
 
-def sample_from_location_family(cov_x, sigma_y, beta, mu, gamma, theta_1, theta_2):
+def sample_from_location_family(cov_x, sigma_y, beta, mu, gamma, theta_me, theta_other):
     x = np.random.multivariate_normal(np.zeros(len(cov_x)), cov_x)
     U_y = np.random.normal(0, sigma_y)
-    y = beta.T @ x + mu.T @ theta_1 + gamma.T @ theta_2 + U_y
+    y = beta.T @ x + mu.T @ theta_me + gamma.T @ theta_other + U_y
     return (x, y)
+
 
 """
 Nash and Test PR
 """
 
-def evaluate_test_performative_risk(data_generator, beta, mu, gamma, theta_p1, theta_p2, cov_x, sigma_y, num_test):
-    test_set = [data_generator(cov_x, sigma_y, beta, mu, gamma, theta_p1, theta_p2) for e in range(num_test)]
+def evaluate_test_performative_risk(data_generator, beta, mu, gamma, theta_me, theta_other, cov_x, sigma_y, num_test):
+    test_set = [data_generator(cov_x, sigma_y, beta, mu, gamma, theta_me, theta_other) for e in range(num_test)]
     x_test = np.array([e[0] for e in test_set])
     y_test = [e[1] for e in test_set]
-    y_pred = x_test @ theta_p1
+    y_pred = x_test @ theta_me
     mse = np.linalg.norm(y_test - y_pred)**2
     mse_avg = mse/len(y_test)
     return mse_avg
@@ -68,9 +68,10 @@ def solve_theta_PO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_
 """
 Helpers for TwoStage Player
 """
-def solve_distribution_params(z_lst, theta_1_lst, theta_2_lst):
+
+def solve_distribution_params(z_lst, theta_me_lst, theta_other_lst):
     y = [e[1] for e in z_lst]
-    A = np.hstack((theta_1_lst, theta_2_lst))
+    A = np.hstack((theta_me_lst, theta_other_lst))
     mu_tilde = np.linalg.pinv(A.T @ A) @ A.T @ y
 
     num_each = int(len(mu_tilde)/2)
@@ -88,4 +89,9 @@ def find_qs(mu_hat, gamma_hat, z_lst, theta_1_lst, theta_2_lst):
         q_lst.append(q)
     return np.array(q_lst)
 
-
+def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
+    y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(len(q))
+    x_arr = np.array(x_lst)
+    A = x_arr - mu_hat
+    theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
+    return theta
