@@ -62,7 +62,12 @@ class DecisionDependentGame(object):
         return mse_avg
 
     def run_post_train_alternating(self):
-        pass
+        for t in range(self.num_alternate_rounds):
+            theta_p1_new = p1.update_theta_without_observations(theta_p2)
+            theta_p2_new  = p2.update_theta_without_observations(theta_p1)
+            self.theta_p1 = theta_p1_new
+            self.theta_p2 = theta_p2_new
+
 
     def run_train(self):
 
@@ -73,8 +78,8 @@ class DecisionDependentGame(object):
             cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
             z_p2 = self.p2_generate_data_func(cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2, self.theta_p1, self.theta_p2)
 
-            theta_p1_new = p1.update_theta(t, self.num_rounds, z_p1, theta_p2)
-            theta_p2_new  = p2.update_theta(t, self.num_rounds, z_p2, theta_p1)
+            theta_p1_new = p1.update_theta_with_observations(t, self.num_rounds, z_p1, theta_p2)
+            theta_p2_new  = p2.update_theta_with_observations(t, self.num_rounds, z_p2, theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
 
