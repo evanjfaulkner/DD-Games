@@ -45,10 +45,9 @@ class DecisionDependentGame(object):
         return self.num_test
 
     def solve_nash(self):
-        #TODO Generalize Yonghun's solve_theta_PO function to work for different cov_x, sigma_y
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-        theta_PO_p1, theta_PO_p2 = solve_theta_PO(mu_p1, mu_p2, gamma_p1, gamma_p2, beta_p1, beta_p2, cov_x_p1)
+        theta_PO_p1, theta_PO_p2 = solve_theta_PO(mu_p1, mu_p2, gamma_p1, gamma_p2, beta_p1, beta_p2, cov_x_p1, cov_x_p2)
         return theta_PO_p1, theta_PO_p2
 
     def evaluate_test_perf_risk_p1(self):
