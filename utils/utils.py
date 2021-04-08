@@ -1,6 +1,9 @@
 import numpy as np
 
 
+"""
+Data
+"""
 def obtain_data(n, d_1, d_2, mu_1, gamma_1, mu_2, gamma_2,
                 cov_x_1, cov_x_2, sigma_y_1, sigma_y_2,
                 beta_1, beta_2):
@@ -25,6 +28,10 @@ def sample_from_location_family(cov_x, sigma_y, beta, mu, gamma, theta_1, theta_
     U_y = np.random.normal(0, sigma_y)
     y = beta.T @ x + mu.T @ theta_1 + gamma.T @ theta_2 + U_y
     return (x, y)
+
+"""
+Nash and Test PR
+"""
 
 def evaluate_test_performative_risk(beta, mu, gamma, theta_p1, theta_p2, cov_x, sigma_y, num_test):
     test_set = [sample_from_distribution(cov_x, sigma_y, beta, mu, gamma, theta_p1, theta_p2) for e in range(num_test)]
@@ -53,3 +60,33 @@ def solve_theta_PO(mu_1,mu_2,gamma_1,gamma_2, beta_1,beta_2,Sigma_x):
     theta_PO_1 = A_1 @ B_1
     theta_PO_2 = A_2 @ B_2
     return theta_PO_1, theta_PO_2
+
+"""
+Helpers for TwoStage Player
+"""
+def solve_distribution_params(z_lst, theta_1_lst, theta_2_lst):
+    y = [e[1] for e in z_lst]
+    A = np.hstack((theta_1_lst, theta_2_lst))
+    mu_tilde = np.linalg.pinv(A.T @ A) @ A.T @ y
+
+    num_each = int(len(mu_tilde)/2)
+    mu_hat = mu_tilde[:num_each]
+    gamma_hat = mu_tilde[num_each:]
+    return mu_hat, gamma_hat
+
+def find_qs(mu_hat, gamma_hat, z_lst, theta_1_lst, theta_2_lst):
+    y_lst = [e[1] for e in z_lst]
+    q_lst = []
+    for (idx, y) in enumerate(y_lst):
+        theta_1 = theta_1_lst[idx]
+        theta_2 = theta_2_lst[idx]
+        q = y - np.dot(mu_hat, theta_1) - np.dot(gamma_hat, theta_2)
+        q_lst.append(q)
+    return np.array(q_lst)
+
+def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
+    y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(len(q))
+    x_arr = np.array(x_lst)
+    A = x_arr - mu_hat
+    theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
+    return theta

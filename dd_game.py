@@ -8,13 +8,14 @@ Class to run a decision dependent game with 2 players
 
 class DecisionDependentGame(object):
 
-    def __init__(self, p1, p2, p1_data_params, p2_data_params, p1_data_generating_func, p2_data_generating_func, num_rounds, num_test):
+    def __init__(self, p1, p2, p1_data_params, p2_data_params, p1_data_generating_func, p2_data_generating_func, num_rounds, num_alternate_rounds, num_test):
         """
         p1, p2: players. Instances of player abstract class
         p1_data_generating_func, p2_data_generating_func: functions that generate data for p1, p2
         p1_data_params, p2_data_params: configurations to generate performative data for both players. Tuple of (cov_x, sigma_y, beta, mu, gamma)
 
         num_rounds: number of training samples
+        num_alternate_rounds: how many rounds the players alternate for after all data has been observed
         num_test: number of test samples
         """
         self.p1 = p1
@@ -29,6 +30,7 @@ class DecisionDependentGame(object):
 
         self.num_rounds = num_rounds
         self.num_test = num_test
+        self.num_alternate_rounds = num_alternate_rounds
 
     def get_p1(self):
         return self.p1
@@ -58,6 +60,9 @@ class DecisionDependentGame(object):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
         mse_avg = evaluate_test_performative_risk(beta_p2, mu_p2, gamma_p2, self.theta_p1, self.theta_p2, cov_x_p2, sigma_y_p2, self.num_test)
         return mse_avg
+
+    def run_post_train_alternating(self):
+        pass
 
     def run_train(self):
 

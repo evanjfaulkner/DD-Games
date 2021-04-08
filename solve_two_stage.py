@@ -6,16 +6,6 @@ import numpy as np
 """
 First stage
 """
-def solve_distribution_params(z_lst, theta_1_lst, theta_2_lst):
-    y = [e[1] for e in z_lst]
-    A = np.hstack((theta_1_lst, theta_2_lst))
-    mu_tilde = np.linalg.pinv(A.T @ A) @ A.T @ y
-
-    num_each = int(len(mu_tilde)/2)
-    mu_hat = mu_tilde[:num_each]
-    gamma_hat = mu_tilde[num_each:]
-    return mu_hat, gamma_hat
-
 def run_first_stage(z_1_lst, z_2_lst, theta_1_lst, theta_2_lst):
     mu_hat_1, gamma_hat_1 = solve_distribution_params(z_1_lst, theta_1_lst, theta_2_lst)
     mu_hat_2, gamma_hat_2 = solve_distribution_params(z_2_lst, theta_1_lst, theta_2_lst)
@@ -24,16 +14,6 @@ def run_first_stage(z_1_lst, z_2_lst, theta_1_lst, theta_2_lst):
 """
 Second stage
 """
-def find_qs(mu_hat, gamma_hat, z_lst, theta_1_lst, theta_2_lst):
-    y_lst = [e[1] for e in z_lst]
-    q_lst = []
-    for (idx, y) in enumerate(y_lst):
-        theta_1 = theta_1_lst[idx]
-        theta_2 = theta_2_lst[idx]
-        q = y - np.dot(mu_hat, theta_1) - np.dot(gamma_hat, theta_2)
-        q_lst.append(q)
-    return np.array(q_lst)
-
 def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
     y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(len(q))
     x_arr = np.array(x_lst)
