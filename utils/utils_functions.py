@@ -47,13 +47,16 @@ def solve_theta_PO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_
     """
     Solves for the performative optima/Nash equilibrium of the DD Game
     """
+    d_1 = np.size(mu_1)
+    d_2 = np.size(mu_2)
+    
     mu_Sig_1 = np.linalg.inv(np.outer(mu_1, mu_1) + Sigma_1)
     mu_Sig_2 = np.linalg.inv(np.outer(mu_2, mu_2) + Sigma_2)
     mu_gamma_1 = np.outer(mu_1, gamma_1) 
     mu_gamma_2 = np.outer(mu_2, gamma_2)
     
-    A_1 = np.linalg.inv(np.eye(d) - mu_gamma_1 @ mu_Sig_2 @ mu_gamma_2)
-    A_2 = np.linalg.inv(np.eye(d) - mu_gamma_2 @ mu_Sig_1 @ mu_gamma_1)
+    A_1 = np.linalg.inv(np.eye(d_1) - mu_gamma_1 @ mu_Sig_2 @ mu_gamma_2)
+    A_2 = np.linalg.inv(np.eye(d_2) - mu_gamma_2 @ mu_Sig_1 @ mu_gamma_1)
     
     B_1 = mu_Sig_1 @ (Sigma_1@beta_1 - mu_gamma_1@mu_Sig_2@Sigma_2@beta_2)
     B_2 = mu_Sig_2 @ (Sigma_2@beta_2 - mu_gamma_2@mu_Sig_1@Sigma_1@beta_1)
