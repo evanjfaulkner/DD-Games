@@ -31,7 +31,7 @@ class DecisionDependentGame(object):
         self.p2_generate_data_func = p2_data_generating_func
         self.p2_data_params = p2_data_params
         cov_x_p2 = self.p2_data_params[0]
-        d2 = len(cov_x_p1)
+        d2 = len(cov_x_p2)
         self.theta_p2 = p2.initialize_theta(d2)
 
         self.num_rounds = num_rounds
@@ -69,7 +69,6 @@ class DecisionDependentGame(object):
 
     def evaluate_test_perf_risk_p2(self):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-
         #The ordering between p1 and p2 gets flipped
         mse_avg = evaluate_test_performative_risk(self.p2_generate_data_func, beta_p2, mu_p2, gamma_p2, self.theta_p2, self.theta_p1, cov_x_p2, sigma_y_p2, self.num_test)
         return mse_avg

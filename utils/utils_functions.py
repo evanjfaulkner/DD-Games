@@ -79,8 +79,8 @@ def solve_theta_SO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_
     mg_1 = np.outer(mu_1,gamma_1)
     mg_2 = np.outer(mu_2,gamma_2)
     
-    mgSig_1 = np.linalg.inv(Sigma_1+mm_1+gg_2)
-    mgSig_2 = np.linalg.inv(Sigma_2+gg_1+mm_2)
+    mgSig_1 = np.linalg.inv(Sigma_1 + mm_1 + gg_2)
+    mgSig_2 = np.linalg.inv(Sigma_2 + gg_1 + mm_2)
     
     A_1 = np.linalg.inv(np.eye(d_1) + (mg_1 + mg_2) @ mgSig_2 @ (Sigma_2 @ beta_2 - (mg_1 + mg_2)))
     A_2 = np.linalg.inv(np.eye(d_2) + (mg_2 + mg_1) @ mgSig_1 @ (Sigma_1 @ beta_1 - (mg_2 + mg_1)))
