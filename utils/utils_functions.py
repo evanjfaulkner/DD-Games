@@ -66,8 +66,14 @@ def solve_theta_SO(mu_1, mu_2, gamma_1, gamma_2, beta_1, beta_2, Sigma_1, Sigma_
     """
     Solves for the Socially Optimal strategy of the DD Game
     """
-    pass
-
+    d_1 = np.size(mu_1)
+    d_2 = np.size(mu_2)
+    
+    A_1 = np.linalg.inv(np.eye(d_1))
+    
+    theta_SO_1 = A_1 @ B_1
+    theta_SO_2 = A_2 @ B_2
+    return theta_SO_1, theta_SO_2
 """
 Helpers for TwoStage Player
 """
