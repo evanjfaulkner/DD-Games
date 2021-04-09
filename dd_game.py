@@ -2,7 +2,8 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("./utils/")
-from utils_functions import solve_theta_PO, solve_theta_SO, evaluate_test_performative_risk, solve_theta
+from utils_functions import solve_theta_PO, solve_theta_SO, solve_theta, evaluate_test_performative_risk, evaluate_closed_performative_risk
+
 
 """
 Class to run a decision dependent game with 2 players
@@ -88,6 +89,14 @@ class DecisionDependentGame(object):
                                                   cov_x_p2, sigma_y_p2,
                                                   self.num_test)
         return mse_avg
+    
+    def evaluate_closed_perf_risk(self):
+        cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
+        cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
+        PR_theta_1, PR_theta_2 = evaluate_closed_performative_risk(
+            self.theta_p1, self.theta_p2, mu_p1, mu_p2, gamma_p1, gamma_p2,
+            beta_p1, beta_p2, cov_x_p1, cov_x_p2, sigma_y_p1, sigma_y_p2)
+        return PR_theta_1, PR_theta_2
 
     def run_post_train_alternating(self):
         for t in range(self.num_alternate_rounds):
