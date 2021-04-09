@@ -10,7 +10,9 @@ Class to run a decision dependent game with 2 players
 
 class DecisionDependentGame(object):
 
-    def __init__(self, p1, p2, p1_data_params, p2_data_params, p1_data_generating_func, p2_data_generating_func, num_rounds, num_alternate_rounds, num_test):
+    def __init__(self, p1, p2, p1_data_params, p2_data_params,
+                 p1_data_generating_func, p2_data_generating_func,
+                 num_rounds, num_alternate_rounds, num_test):
         """
         p1, p2: players. Instances of player abstract class
         p1_data_generating_func, p2_data_generating_func: functions that generate data for p1, p2
@@ -53,24 +55,38 @@ class DecisionDependentGame(object):
     def solve_nash(self):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-        theta_PO_p1, theta_PO_p2 = solve_theta_PO(mu_p1, mu_p2, gamma_p1, gamma_p2, beta_p1, beta_p2, cov_x_p1, cov_x_p2)
+        theta_PO_p1, theta_PO_p2 = solve_theta_PO(mu_p1, mu_p2,
+                                                  gamma_p1, gamma_p2,
+                                                  beta_p1, beta_p2,
+                                                  cov_x_p1, cov_x_p2)
         return theta_PO_p1, theta_PO_p2
 
     def solve_social_opt(self):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-        theta_SO_p1, theta_SO_p2 = solve_theta_SO(mu_p1, mu_p2, gamma_p1, gamma_p2, beta_p1, beta_p2, cov_x_p1, cov_x_p2)
+        theta_SO_p1, theta_SO_p2 = solve_theta_SO(mu_p1, mu_p2,
+                                                  gamma_p1, gamma_p2,
+                                                  beta_p1, beta_p2,
+                                                  cov_x_p1, cov_x_p2)
         return theta_SO_p1, theta_SO_p2
 
     def evaluate_test_perf_risk_p1(self):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
-        mse_avg = evaluate_test_performative_risk(self.p1_generate_data_func, beta_p1, mu_p1, gamma_p1, self.theta_p1, self.theta_p2, cov_x_p1, sigma_y_p1, self.num_test)
+        mse_avg = evaluate_test_performative_risk(self.p1_generate_data_func,
+                                                  beta_p1, mu_p1, gamma_p1,
+                                                  self.theta_p1, self.theta_p2,
+                                                  cov_x_p1, sigma_y_p1,
+                                                  self.num_test)
         return mse_avg
 
     def evaluate_test_perf_risk_p2(self):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
         #The ordering between p1 and p2 gets flipped
-        mse_avg = evaluate_test_performative_risk(self.p2_generate_data_func, beta_p2, mu_p2, gamma_p2, self.theta_p2, self.theta_p1, cov_x_p2, sigma_y_p2, self.num_test)
+        mse_avg = evaluate_test_performative_risk(self.p2_generate_data_func,
+                                                  beta_p2, mu_p2, gamma_p2,
+                                                  self.theta_p2, self.theta_p1,
+                                                  cov_x_p2, sigma_y_p2,
+                                                  self.num_test)
         return mse_avg
 
     def run_post_train_alternating(self):
@@ -84,13 +100,19 @@ class DecisionDependentGame(object):
 
         for t in range(self.num_rounds):
             cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
-            z_p1 = self.p1_generate_data_func(cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1, self.theta_p1, self.theta_p2)
+            z_p1 = self.p1_generate_data_func(cov_x_p1, sigma_y_p1,
+                                              beta_p1, mu_p1, gamma_p1,
+                                              self.theta_p1, self.theta_p2)
 
             cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-            z_p2 = self.p2_generate_data_func(cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2, self.theta_p2, self.theta_p1)
+            z_p2 = self.p2_generate_data_func(cov_x_p2, sigma_y_p2,
+                                              beta_p2, mu_p2, gamma_p2,
+                                              self.theta_p2, self.theta_p1)
 
-            theta_p1_new = self.p1.update_theta_with_observations(t, self.num_rounds, z_p1, self.theta_p2)
-            theta_p2_new  = self.p2.update_theta_with_observations(t, self.num_rounds, z_p2, self.theta_p1)
+            theta_p1_new = self.p1.update_theta_with_observations(t, self.num_rounds,
+                                                                  z_p1, self.theta_p2)
+            theta_p2_new  = self.p2.update_theta_with_observations(t, self.num_rounds,
+                                                                   z_p2, self.theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
 

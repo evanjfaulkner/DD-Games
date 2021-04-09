@@ -4,15 +4,15 @@ import sys
 sys.path.append("./utils/")
 from utils_functions import find_qs, solve_distribution_params, solve_theta
 
-"""
-Player that implements the 3-stage algorithm:
-    1. Collect n/2 samples and estimate mu, gamma.
-    2. Collect n/2 samples and find qs for training.
-    3. Alternating between players without any new data.
-"""
 
 #TODO Make an abstract class for player that this concrete class extends
 class TwoStagePlayer(object):
+    """
+    Player that implements the 3-stage algorithm:
+        1. Collect n/2 samples and estimate mu, gamma.
+        2. Collect n/2 samples and find qs for training.
+        3. Alternating between players without any new data.
+    """
 
     def __init__(self):
         self.theta_history = []
@@ -39,7 +39,9 @@ class TwoStagePlayer(object):
         return np.random.normal(size = d)
 
     def perform_estimation_between_stages(self):
-        self.mu_hat, self.gamma_hat = solve_distribution_params(self.data_history, self.theta_history, self.theta_other_history)
+        self.mu_hat, self.gamma_hat = solve_distribution_params(self.data_history,
+                                                                self.theta_history,
+                                                                self.theta_other_history)
         return self.mu_hat, self.gamma_hat
 
     def update_theta_stage_two(self, z_t):
@@ -52,14 +54,18 @@ class TwoStagePlayer(object):
         z_train = self.data_history[num_first_stage:]
         x_lst = [e[0] for e in z_train]
 
-        qs = find_qs(self.mu_hat, self.gamma_hat, self.data_history[num_first_stage:], self.theta_history[num_first_stage:], self.theta_other_history[num_first_stage:])
+        qs = find_qs(self.mu_hat, self.gamma_hat,
+                     self.data_history[num_first_stage:],
+                     self.theta_history[num_first_stage:],
+                     self.theta_other_history[num_first_stage:])
 
         self.x_train = x_lst
         self.qs = qs
         return qs
 
     def update_theta_without_observations(self, theta_other):
-        theta_new = solve_theta(self.x_train, self.qs, self.mu_hat, self.gamma_hat, theta_other)
+        theta_new = solve_theta(self.x_train, self.qs,
+                                self.mu_hat, self.gamma_hat, theta_other)
         self.theta_history.append(theta_new)
         return theta_new
 
