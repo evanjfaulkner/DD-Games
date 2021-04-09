@@ -42,6 +42,22 @@ def evaluate_test_performative_risk(data_generator, beta, mu, gamma,
     mse_avg = mse/len(y_test)
     return mse_avg
 
+def evaluate_closed_performative_risk(theta_1, theta_2, mu_1, mu_2,
+                                      gamma_1, gamma_2, beta_1, beta_2,
+                                      Sigma_1, Sigma_2, sigma_y_1, sigma_y_2):
+    """
+    Closed form solution for PR(\theta). Returns PR for both players
+    """
+    PR_theta_1 = 0.5*(beta_1.T@Sigma_1@beta_1 + sigma_y_1
+                     + (mu_1.T@theta_1 + gamma_1.T@theta_2)**2
+                     - 2*beta_1.T@Sigma_1@theta_1
+                     + theta_1.T@Sigma_1@theta_1)
+    PR_theta_2 = 0.5*(beta_2.T@Sigma_2@beta_2 + sigma_y_2
+                     + (mu_2.T@theta_2 + gamma_2.T@theta_1)**2
+                     - 2*beta_2.T@Sigma_2@theta_2
+                     + theta_2.T@Sigma_2@theta_2)
+    return PR_theta_1, PR_theta_2
+
 def solve_theta_PO(mu_1, mu_2, gamma_1, gamma_2,
                    beta_1, beta_2, Sigma_1, Sigma_2):
     """
