@@ -13,6 +13,15 @@ def sample_from_location_family(cov_x, sigma_y,
     y = beta.T @ x + mu.T @ theta_me + gamma.T @ theta_other + U_y
     return (x, y)
 
+def sample_sphere(epsilon,d):
+    """
+    Returns a point on the sphere in R^d of radius epsilon
+    """
+    x = np.random.normal(size=d)
+    x /= np.linalg.norm(x)
+    x *= epsilon*x
+    return x
+
 
 """
 Nash and Test PR
