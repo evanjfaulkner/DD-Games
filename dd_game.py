@@ -13,7 +13,7 @@ class DecisionDependentGame(object):
 
     def __init__(self, p1, p2, p1_data_params, p2_data_params,
                  p1_data_generating_func, p2_data_generating_func,
-                 num_rounds, num_alternate_rounds, num_test):
+                 num_rounds=100000, num_alternate_rounds=100, num_test=10000):
         """
         p1, p2: players. Instances of player abstract class
         p1_data_generating_func, p2_data_generating_func: functions that generate data for p1, p2
