@@ -13,13 +13,12 @@ class DFOPlayer(object):
     gradient descent without a gradient", Flaxman et. al., 2008
     """
 
-    def __init__(self, delta=1, eta=1e-3, batch=1):
+    def __init__(self, delta=1, eta=1e-2):
         self.theta_history = []
         self.u_history = []
 
         self.delta = delta  # Radius of the sphere for perturbed evaluations
         self.eta = eta  # Initial step size
-        self.batch_size = batch  # Batch size for derivative estimate
 
     def initialize_theta(self, d):
         if len(self.theta_history) != 0:
@@ -29,10 +28,13 @@ class DFOPlayer(object):
         return theta_init
     
     def perturb_theta(self):
-        u = sample_sphere(self.delta,len(self.theta_history[-1]))
+        u = sample_sphere(self.delta/np.log(len(self.theta_history)+2),
+                          len(self.theta_history[-1]))
         self.u_history.append(u)
-        self.theta_history.append(self.theta_history[-1]+u)
-        return self.theta_history[-1]
+        return self.theta_history[-1]+u
     
-    def update_theta(self,oracle_risk,step):
-        self.theta_history[-1] = self.theta_history[-2]+((self.eta/np.log(step))*oracle_risk*self.u_history[-1])
+    def update_theta(self,oracle_risk):
+        self.theta_history.append(self.theta_history[-1]
+                                  -((self.eta/np.log(len(self.theta_history)+2))
+                                    *oracle_risk
+                                    *self.u_history[-1]))

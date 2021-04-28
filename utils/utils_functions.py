@@ -19,7 +19,7 @@ def sample_sphere(epsilon,d):
     """
     x = np.random.normal(size=d)
     x /= np.linalg.norm(x)
-    x *= epsilon*x
+    x *= epsilon
     return x
 
 
