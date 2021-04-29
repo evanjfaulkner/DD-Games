@@ -18,6 +18,7 @@ class TwoStagePlayer(object):
         self.theta_history = []
         self.theta_other_history = []
         self.data_history = []
+        self.risk_history = []
 
         #Will get filled in at the end of Stage 1
         self.mu_hat = None

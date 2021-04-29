@@ -16,6 +16,7 @@ class DFOPlayer(object):
     def __init__(self, delta=1, eta=1e-2):
         self.theta_history = []
         self.u_history = []
+        self.risk_history = []
 
         self.delta = delta  # Radius of the sphere for perturbed evaluations
         self.eta = eta  # Initial step size
@@ -34,6 +35,7 @@ class DFOPlayer(object):
         return self.theta_history[-1]+u
     
     def update_theta(self,oracle_risk):
+        self.risk_history.append(oracle_risk)
         self.theta_history.append(self.theta_history[-1]
                                   -((self.eta/np.log(len(self.theta_history)+2))
                                     *oracle_risk
