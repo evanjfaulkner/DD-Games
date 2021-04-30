@@ -101,7 +101,7 @@ class DecisionDependentGame(object):
     def run_post_train_alternating(self):
         for t in range(self.num_alternate_rounds):
             theta_p1_new = self.p1.update_theta_without_observations(self.theta_p2)
-            theta_p2_new  = self.p2.update_theta_without_observations(self.theta_p1)
+            theta_p2_new = self.p2.update_theta_without_observations(self.theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
 
@@ -120,7 +120,7 @@ class DecisionDependentGame(object):
 
             theta_p1_new = self.p1.update_theta_with_observations(t, self.num_rounds,
                                                                   z_p1, self.theta_p2)
-            theta_p2_new  = self.p2.update_theta_with_observations(t, self.num_rounds,
+            theta_p2_new = self.p2.update_theta_with_observations(t, self.num_rounds,
                                                                    z_p2, self.theta_p1)
             self.theta_p1 = theta_p1_new
             self.theta_p2 = theta_p2_new
