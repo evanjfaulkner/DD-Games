@@ -120,9 +120,9 @@ def solve_distribution_params(z_lst, theta_me_lst, theta_other_lst):
     y = [e[1] for e in z_lst]
     A = np.hstack((theta_me_lst, theta_other_lst))
     mu_tilde = np.linalg.pinv(A.T @ A) @ A.T @ y
-    num_each = int(len(mu_tilde)/2)
-    mu_hat = mu_tilde[:num_each]
-    gamma_hat = mu_tilde[num_each:]
+    num_me = int(np.size(theta_me_lst, axis=1))
+    mu_hat = mu_tilde[:num_me]
+    gamma_hat = mu_tilde[num_me:]
     return mu_hat, gamma_hat
 
 def find_qs(mu_hat, gamma_hat, z_lst, theta_me_lst, theta_other_lst):
@@ -141,3 +141,9 @@ def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
     A = x_arr - mu_hat
     theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
     return theta
+
+def solve_mu(z_lst, theta_me_lst):
+    y = [e[1] for e in z_lst]
+    A = np.array(theta_me_lst)
+    mu_hat = np.linalg.pinv(A.T @ A) @ A.T @ y
+    return mu_hat

@@ -3664,7 +3664,7 @@ CellTagsIndex->{
    CellTags->"Derivative_templates"],
   Cell[170159, 3472, 1514, 39, 32, "Output",ExpressionUUID->"9ec43a6b-9717-4b63-972b-ce48fcb3a3ec",
    CellTags->"Derivative_templates"],
-  Cell[171676, 3513, 4509, 126, 80, "Output",ExpressionUUID->"e201605a-5cba-4663-9fcd-9b940758f798",
+  Cell[171676, 3513, 4509, 126, 59, "Output",ExpressionUUID->"e201605a-5cba-4663-9fcd-9b940758f798",
    CellTags->"Derivative_templates"]}
  }
 *)
@@ -3724,7 +3724,7 @@ Cell[168666, 3432, 1490, 38, 32, "Output",ExpressionUUID->"4a4e9cc9-53e3-4653-af
  CellTags->"Derivative_templates"],
 Cell[170159, 3472, 1514, 39, 32, "Output",ExpressionUUID->"9ec43a6b-9717-4b63-972b-ce48fcb3a3ec",
  CellTags->"Derivative_templates"],
-Cell[171676, 3513, 4509, 126, 80, "Output",ExpressionUUID->"e201605a-5cba-4663-9fcd-9b940758f798",
+Cell[171676, 3513, 4509, 126, 59, "Output",ExpressionUUID->"e201605a-5cba-4663-9fcd-9b940758f798",
  CellTags->"Derivative_templates"]
 }, Open  ]]
 }
