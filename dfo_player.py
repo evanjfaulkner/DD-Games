@@ -24,7 +24,7 @@ class DFOPlayer(object):
     def initialize_theta(self, d):
         if len(self.theta_history) != 0:
             raise ValueError("Theta has already been initialized")
-        theta_init = np.random.normal(size = d)
+        theta_init = 0.5*np.random.normal(size = d)
         self.theta_history.append(theta_init)
         return theta_init
     
