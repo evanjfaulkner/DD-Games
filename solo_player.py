@@ -64,7 +64,8 @@ class SoloPlayer(object):
     def update_theta_without_observations(self, theta_other):
         self.theta_other_history.append(theta_other)
         theta_new = solve_theta(self.x_train, self.qs,
-                                self.mu_hat, self.gamma_hat, theta_other)
+                                self.mu_hat, np.zeros(np.shape(self.mu_hat)),
+                                theta_other)
         self.theta_history.append(theta_new)
         return theta_new
 
