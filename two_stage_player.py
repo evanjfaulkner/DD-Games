@@ -65,6 +65,7 @@ class TwoStagePlayer(object):
         return qs
 
     def update_theta_without_observations(self, theta_other):
+        self.theta_other_history.append(theta_other)
         theta_new = solve_theta(self.x_train, self.qs,
                                 self.mu_hat, self.gamma_hat, theta_other)
         self.theta_history.append(theta_new)
@@ -78,8 +79,8 @@ class TwoStagePlayer(object):
         if t < num_rounds/2 - 1:
             #Stage 1
             theta_new = self.update_theta_stage_one(z_t)
-        elif t == num_rounds/2 - 1:
-            print("Stage 1 finished. Performing estimation now")
+        elif self.mu_hat is None:
+#             print("Stage 1 finished. Performing estimation now")
             #End of stage 1
             self.perform_estimation_between_stages()
             theta_new = self.update_theta_stage_two(z_t)
@@ -87,7 +88,7 @@ class TwoStagePlayer(object):
             #Stage 2
             theta_new = self.update_theta_stage_two(z_t)
         else :
-            print("Stage 2 finished. Finding qs now.")
+#             print("Stage 2 finished. Finding qs now.")
             #End of stage 2
             theta_new = self.update_theta_stage_two(z_t)
             self.find_qs_after_stage_two()
