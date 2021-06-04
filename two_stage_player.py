@@ -4,8 +4,6 @@ import sys
 sys.path.append("./utils/")
 from utils_functions import find_qs, solve_distribution_params, solve_theta
 
-
-#TODO Make an abstract class for player that this concrete class extends
 class TwoStagePlayer(object):
     """
     Player that implements the 3-stage algorithm:
