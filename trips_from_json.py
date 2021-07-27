@@ -23,7 +23,7 @@ def df_from_json(dir_string):
                     data = data.append(df, ignore_index=True)
     return data
 
-def extract_trips(data, comp_=('link','wheels'), print_idx=False):
+def extract_trips(data, comp_=('lime','link','wheels'), print_idx=False):
     trip_count = np.zeros(len(comp_))
     trip_time = np.zeros(len(comp_))
     trips = pd.DataFrame()
@@ -63,4 +63,5 @@ if __name__ == '__main__':
     dir_string = "../data/20210716-19-scooterdata"
     data = df_from_json(dir_string)
     data.to_csv(dir_string + '.csv', index=False)
-    trips = extract_trips(data, print_idx=True)
+    trips = extract_trips(data, print_idx=False)
+    trips.to_csv(dir_string + '-trips.csv', index=False)
