@@ -60,7 +60,7 @@ def extract_trips(data, comp_=('lime','link','wheels'), print_idx=False):
 
 
 if __name__ == '__main__':
-    dir_string = "../data/20210720-23-scooterdata"
+    dir_string = "./data/20210720-23-scooterdata"
     data = df_from_json(dir_string)
     data.to_csv(dir_string + '.csv', index=False)
     trips = extract_trips(data, print_idx=False)
