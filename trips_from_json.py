@@ -31,8 +31,6 @@ def df_from_json(dir_string):
     return data
 
 def extract_trips(data, comp_=('link','wheels'), print_idx=False):
-    trip_count = np.zeros(len(comp_))
-    trip_time = np.zeros(len(comp_))
     trips = pd.DataFrame()
 
     for comp in comp_:
@@ -67,22 +65,35 @@ def extract_trips(data, comp_=('link','wheels'), print_idx=False):
     return trips
 
 if __name__ == '__main__':
+    dir_string = "./data/20210716-23-scooterdata"
+    # Check for scooter status data
     scooter_data_path = Path('./data/20210716-23-scooterdata.csv')
     if scooter_data_path.exists():
+        print('Reading scooter data...')
         data = pd.read_csv('./data/20210716-23-scooterdata.csv')
     else:
-        dir_string = "./data/20210716-23-scooterdata"
+        print('Ingesting .json files...')
         data = df_from_json(dir_string)
+        print('Saving scooter data...')
         data.to_csv(dir_string + '.csv', index=False)
-        
-    trips = extract_trips(data, print_idx=False)
-    trips.to_csv(dir_string + '-trips.csv', index=False)
+    # Check for trip data
+    trip_data_path = Path('./data/20210716-23-scooterdata-trips.csv')
+    if trip_data_path.exists():
+        print('Reading trip data...')
+        trips = pd.read_csv('./data/20210716-23-scooterdata-trips.csv')
+    else:
+        print('Extracting trips...')
+        trips = extract_trips(data, print_idx=False)
+        print('Saving trip data...')
+        trips.to_csv(dir_string + '-trips.csv', index=False)
+    print('Processing trip data...')
+    # Load census block group data
     shp_path = './data/Census_Block_Groups_2010/Census_Block_Groups_2010.shp'
     sf = shp.Reader(shp_path)
     blocks = read_shapefile(sf)
-
+    # Process trip data
     trips['block_start'] = trips.progress_apply(lambda row: find_block(row['lon_start'],row['lat_start'],blocks), axis=1)
     trips['block_end'] = trips.progress_apply(lambda row: find_block(row['lon_end'],row['lat_end'],blocks), axis=1)
     trips['price'] = np.floor((trips['time_end']-trips['time_start'])/60)*.36+1
-    trips['distance'] = trips.progess_apply(lambda row: dist.geodesic((row['lat_start'],row['lon_start']),(row['lat_end'],row['lon_end'])).km, axis=1)
+    trips['distance'] = trips.progress_apply(lambda row: dist.geodesic((row['lat_start'],row['lon_start']),(row['lat_end'],row['lon_end'])).km, axis=1)
     trips.to_csv(dir_string + '-trips-processed.csv', index=False)
