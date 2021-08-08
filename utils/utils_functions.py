@@ -15,11 +15,12 @@ def sample_from_location_family(cov_x, sigma_y,
 
 def sample_from_nonlinear_family(cov_x, sigma_y,
                                  beta, mu, gamma,
-                                 theta_me, theta_other):
+                                 theta_me, theta_other,
+                                 epsilon=10):
     
     x = np.random.multivariate_normal(np.zeros(len(cov_x)), cov_x)
     U_y = np.random.normal(0, sigma_y)
-    y = beta.T @ x + mu.T @ np.square(theta_me) + gamma.T @ np.square(theta_other) + U_y
+    y = beta.T @ x + mu.T @ (theta_me + (epsilon*np.square(theta_me))) + gamma.T @ theta_other + U_y
     return (x, y)
 
 def sample_sphere(epsilon,d):
