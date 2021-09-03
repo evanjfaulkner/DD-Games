@@ -21,7 +21,7 @@ class DFOPlayer(object):
         self.delta = delta  # Radius of the sphere for perturbed evaluations
         self.eta = eta  # Initial step size
 
-    def initialize_theta(self, d, theta_0):
+    def initialize_theta(self, d, theta_0=None):
         if len(self.theta_history) != 0:
             raise ValueError("Theta has already been initialized")
         elif theta_0 is not None:
@@ -34,13 +34,13 @@ class DFOPlayer(object):
         return theta_init
     
     def perturb_theta(self):
-        u = sample_sphere(self.delta/np.sqrt(len(self.theta_history)+2),
+        u = sample_sphere(self.delta/np.log10((len(self.theta_history)+2)),
                           len(self.theta_history[-1]))
         self.u_history.append(u)
         return self.theta_history[-1]+u
     
     def update_theta(self,oracle_risk):
         self.risk_history.append(oracle_risk)
-        theta_new = self.theta_history[-1]-((self.eta/np.sqrt(len(self.theta_history)+2))*oracle_risk*self.u_history[-1])
+        theta_new = self.theta_history[-1]-((self.eta/np.log10((len(self.theta_history)/10+2))*oracle_risk*self.u_history[-1]))
         self.theta_history.append(theta_new)
         return theta_new

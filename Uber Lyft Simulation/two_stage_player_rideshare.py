@@ -2,7 +2,7 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("../utils/")
-from utils_rideshare import find_qs, solve_distribution_params, solve_theta
+from utils_rideshare import find_qs, solve_distribution_params, gd_theta
 
 
 class TwoStagePlayer(object):
@@ -27,7 +27,7 @@ class TwoStagePlayer(object):
         self.x_train = None
         self.qs = None
 
-    def initialize_theta(self, d, theta_0):
+    def initialize_theta(self, d, theta_0=None):
         if len(self.theta_history) != 0:
             raise ValueError("Theta has already been initialized")
         elif theta_0 is not None:
@@ -55,7 +55,7 @@ class TwoStagePlayer(object):
         num_rounds = len(self.data_history)
         num_first_stage = int(num_rounds/2)
         z_train = self.data_history[num_first_stage:]
-        x_lst = [e[0] for e in z_train]
+        x_lst = [e for e in z_train]
 
         qs = find_qs(self.mu_hat, self.gamma_hat,
                      self.data_history[num_first_stage:],
@@ -66,10 +66,10 @@ class TwoStagePlayer(object):
         self.qs = qs
         return qs
 
-    def update_theta_without_observations(self, theta_other):
+    def update_theta_without_observations(self, theta_me, theta_other, lambda_r, eta, t):
         self.theta_other_history.append(theta_other)
-        theta_new = solve_theta(self.x_train, self.qs,
-                                self.mu_hat, self.gamma_hat, theta_other)
+        g = np.mean(self.qs)
+        theta_new = gd_theta(g, eta, lambda_r, t, self.mu_hat, self.gamma_hat, theta_me, theta_other)
         self.theta_history.append(theta_new)
         return theta_new
 
