@@ -60,8 +60,9 @@ class DecisionDependentGame(object):
     def evaluate_perf_risk_p1(self):
         g_p1, d1, mu_p1, gamma_p1, lambda_p1, eta_p1 = self.p1_data_params
         risk = evaluate_performative_risk(self.p1_generate_data_func,
-                                               g_p1, mu_p1, gamma_p1, lambda_p1,
-                                               self.theta_p1, self.theta_p2)
+                                          g_p1, mu_p1, gamma_p1, lambda_p1,
+                                          self.theta_p1, self.theta_p2,
+                                          self.num_test)
         return risk
 
     def evaluate_perf_risk_p2(self):
@@ -69,7 +70,8 @@ class DecisionDependentGame(object):
         #The ordering between p1 and p2 gets flipped
         risk = evaluate_performative_risk(self.p2_generate_data_func,
                                           g_p2, mu_p2, gamma_p2, lambda_p2,
-                                          self.theta_p2, self.theta_p1)
+                                          self.theta_p2, self.theta_p1,
+                                          self.num_test)
         return risk
 
     def run_post_train_alternating(self):

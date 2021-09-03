@@ -6,7 +6,7 @@ Data
 """
 def sample_from_location_family_rideshare(g, mu, gamma, theta_me, theta_other):
     
-    y = g + mu.T @ theta_me + gamma.T @ theta_other
+    y = np.random.poisson(g) + mu.T @ theta_me + gamma.T @ theta_other
     return y
 
 def sample_sphere(epsilon,d):
@@ -24,11 +24,15 @@ Evaluate PR
 """
 
 def evaluate_performative_risk(demand_generator, g, mu, gamma, lambda_r,
-                               theta_me, theta_other):
-    
-    demand = demand_generator(g, mu, gamma, theta_me, theta_other)
-    risk = (-demand*(theta_me+10))+(lambda_r*np.linalg.norm(theta_me)/2)
-    return risk    
+                               theta_me, theta_other, num_test):
+    if num_test == 1:
+        return (-demand_generator(g, mu, gamma, theta_me, theta_other)
+                *(theta_me+10))+(lambda_r*np.linalg.norm(theta_me)/2)
+    else:
+        risks = [(-demand_generator(g, mu, gamma, theta_me, theta_other)
+                  *(theta_me+10))+(lambda_r*np.linalg.norm(theta_me)/2)
+                for i in range(num_test)]
+        return sum(risks)/len(risks)
 
 
 """
