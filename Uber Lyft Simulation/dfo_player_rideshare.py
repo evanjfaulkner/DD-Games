@@ -29,7 +29,7 @@ class DFOPlayer(object):
             self.theta_history.append(theta_init)
         else:
 #             theta_init = np.random.normal(size = d)
-            theta_init = np.zeros(d)
+            theta_init = np.zeros((d,1))
             self.theta_history.append(theta_init)
         return theta_init
     
@@ -41,6 +41,7 @@ class DFOPlayer(object):
     
     def update_theta(self,oracle_risk):
         self.risk_history.append(oracle_risk)
+#         theta_new = self.theta_history[-1]-(self.eta*oracle_risk*self.u_history[-1])
         theta_new = self.theta_history[-1]-((self.eta/np.log10((len(self.theta_history)/10+2))*oracle_risk*self.u_history[-1]))
         self.theta_history.append(theta_new)
         return theta_new

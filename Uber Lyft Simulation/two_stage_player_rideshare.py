@@ -35,12 +35,12 @@ class TwoStagePlayer(object):
             self.theta_history.append(theta_init)
         else:
 #             theta_init = np.random.normal(size = d)
-            theta_init = np.zeros(d)
+            theta_init = np.zeros((d,1))
             self.theta_history.append(theta_init)
         return theta_init
 
     def update_theta_stage_one(self, z_t, d):
-        return np.random.normal(size = d)
+        return np.random.normal(size = (d,1))
 
     def perform_estimation_between_stages(self):
         self.mu_hat, self.gamma_hat = solve_distribution_params(self.data_history,
@@ -49,7 +49,7 @@ class TwoStagePlayer(object):
         return self.mu_hat, self.gamma_hat
 
     def update_theta_stage_two(self, z_t, d):
-        return np.random.normal(size = d)
+        return np.random.normal(size = (d,1))
 
     def find_qs_after_stage_two(self):
         num_rounds = len(self.data_history)
@@ -64,12 +64,13 @@ class TwoStagePlayer(object):
 
         self.x_train = x_lst
         self.qs = qs
+#         print(np.mean(qs, axis=0))
         return qs
 
-    def update_theta_without_observations(self, theta_me, theta_other, lambda_r, eta, t):
+    def update_theta_without_observations(self, theta_me, theta_other, lambda_r, eta, t, prices_):
         self.theta_other_history.append(theta_other)
-        g = np.mean(self.qs)
-        theta_new = gd_theta(g, eta, lambda_r, t, self.mu_hat, self.gamma_hat, theta_me, theta_other)
+        g = np.mean(self.qs, axis=0)
+        theta_new = gd_theta(g, prices_, eta, lambda_r, t, self.mu_hat, self.gamma_hat, theta_me, theta_other)
         self.theta_history.append(theta_new)
         return theta_new
 
