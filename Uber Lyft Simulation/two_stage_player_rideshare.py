@@ -70,7 +70,7 @@ class TwoStagePlayer(object):
     def update_theta_without_observations(self, theta_me, theta_other, lambda_r, eta, t, prices_):
         self.theta_other_history.append(theta_other)
         g = np.mean(self.qs, axis=0)
-        theta_new = gd_theta(g, prices_, eta, lambda_r, t, self.mu_hat, self.gamma_hat, theta_me, theta_other)
+        theta_new = np.clip(gd_theta(g, prices_, eta, lambda_r, t, self.mu_hat, self.gamma_hat, theta_me, theta_other),-5,5)
         self.theta_history.append(theta_new)
         return theta_new
 
