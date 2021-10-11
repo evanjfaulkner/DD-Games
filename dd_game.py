@@ -2,7 +2,7 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("./utils/")
-from utils_functions import solve_theta_PO, solve_theta_SO, solve_theta, evaluate_test_performative_risk, evaluate_closed_performative_risk
+from utils_functions import solve_theta_PO, solve_theta_SO, solve_theta, evaluate_test_performative_risk, evaluate_closed_performative_risk, sample_from_location_family
 
 
 """
@@ -126,3 +126,35 @@ class DecisionDependentGame(object):
             self.theta_p2 = theta_p2_new
 
         return self.theta_p1, self.theta_p2
+    
+    def oracle_grad1(self):
+        cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
+        mu_hat = mu_p1
+        gamma_hat = gamma_p1
+        theta_me = self.theta_p1
+        theta_other = self.theta_p2
+        grad = 0
+        return grad
+    
+    def oracle_grad2(self):
+        cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
+        mu_hat = mu_p2
+        gamma_hat = gamma_p2
+        theta_me = self.theta_p2
+        theta_other = self.theta_p1
+        grad = 0
+        return grad
+        
+    def oracle_z1(self):
+        cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
+        theta_me = self.theta_p1
+        theta_other = self.theta_p2
+        z1 = sample_from_location_family(cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1, theta_me, theta_other)
+        return z1
+    
+    def oracle_z2(self):
+        cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
+        theta_me = self.theta_p2
+        theta_other = self.theta_p1
+        z2 = sample_from_location_family(cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2, theta_me, theta_other)
+        return z2

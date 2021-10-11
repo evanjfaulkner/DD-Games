@@ -169,6 +169,10 @@ def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
     theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
     return theta
 
+def grad_l(z_hat, theta):
+    grad = 0
+    return grad
+
 def solve_mu(z_lst, theta_me_lst):
     y = [e[1] for e in z_lst]
     A = np.array(theta_me_lst)

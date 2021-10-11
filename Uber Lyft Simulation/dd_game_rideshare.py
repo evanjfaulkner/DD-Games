@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 sys.path.append("./utils/")
-from utils_rideshare import gd_theta, evaluate_performative_risk
+from utils_rideshare import gd_theta, evaluate_performative_risk, sample_from_location_family_rideshare
 
 
 """
@@ -103,3 +103,39 @@ class DecisionDependentGame(object):
             self.theta_p2 = theta_p2_new
 
         return self.theta_p1, self.theta_p2
+    
+    def oracle_grad1(self, p1, q1):
+        g_p1, d1, mu_p1, gamma_p1, lambda_p1, eta_p1, prices_p1 = self.p1_data_params
+        mu_hat = p1[:,:d1]
+        gamma_hat = p1[:,d1:]
+        theta_me = self.theta_p1
+        theta_other = self.theta_p2
+#         print('g',g_p1.shape)
+#         print('mu',mu_hat.shape)
+#         print('gamma',gamma_hat.shape)
+#         print('prices', prices_p1.shape)
+#         print('thetame', theta_me.shape)
+#         print('thetaother', theta_other.shape)
+#         grad = -q1 - np.multiply(mu_hat.T,prices_p1) - (2*np.multiply(mu_hat.T,theta_me)) - (np.multiply(gamma_hat.T,theta_other)) + (lambda_p1*theta_me)
+        grad = -g_p1 - np.multiply(mu_p1,prices_p1) - (2*np.multiply(mu_p1,theta_me)) - (np.multiply(gamma_p1,theta_other)) + (lambda_p1*theta_me)
+        return grad
+    
+    def oracle_grad2(self, p2, q2):
+        g_p2, d2, mu_p2, gamma_p2, lambda_p2, eta_p2, prices_p2 = self.p2_data_params
+        mu_hat = p2[:,:d2]
+        gamma_hat = p2[:,d2:]
+        theta_me = self.theta_p2
+        theta_other = self.theta_p1
+#         grad = -q2 - np.multiply(mu_hat.T,prices_p2) - (2*np.multiply(mu_hat.T,theta_me)) - (np.multiply(gamma_hat.T,theta_other)) + (lambda_p2*theta_me)
+        grad = -g_p2 - np.multiply(mu_p2,prices_p2) - (2*np.multiply(mu_p2,theta_me)) - (np.multiply(gamma_p2,theta_other)) + (lambda_p2*theta_me)
+        return grad
+        
+    def oracle_z1(self):
+        g_p1, d1, mu_p1, gamma_p1, lambda_p1, eta_p1, prices_p1 = self.p1_data_params
+        z1 = sample_from_location_family_rideshare(g_p1, mu_p1, gamma_p1, self.theta_p1, self.theta_p2, n=1)
+        return z1
+    
+    def oracle_z2(self):
+        g_p2, d2, mu_p2, gamma_p2, lambda_p2, eta_p2, prices_p2 = self.p2_data_params
+        z2 = sample_from_location_family_rideshare(g_p2, mu_p2, gamma_p2, self.theta_p2, self.theta_p1, n=1)
+        return z2

@@ -5,9 +5,16 @@ import ipdb
 Data
 """
 def sample_from_location_family_rideshare(g, mu, gamma, theta_me, theta_other, n=1):
-    
     y = np.random.poisson(lam=g, size=(len(g),n)) + np.multiply(mu,theta_me) + np.multiply(gamma,theta_other)
-    return y
+    return y.reshape(-1,n)
+
+def sample_from_location_family_toy(g, mu, gamma, theta_me, theta_other, n=1):
+    y = np.random.normal(loc=g, scale=1, size=(len(g),n)) + np.multiply(mu,theta_me) + np.multiply(gamma,theta_other)
+    return y.reshape(-1,n)
+
+def location_family_demand_rideshare(g, mu, gamma, theta_me, theta_other):
+    y = g + np.multiply(mu,theta_me) + np.multiply(gamma,theta_other)
+    return np.maximum(y,np.zeros(y.shape)).reshape(-1,1)
 
 def sample_sphere(epsilon,d):
     """
