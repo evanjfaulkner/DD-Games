@@ -65,12 +65,19 @@ class OnlinePlayer(object):
         return q_k
     
     def update_p(self):
+#         print(len(self.data_history))
         p_hat_old = self.p_hat_history[-1]
-        z_t = np.array(self.data_history[-self.n:]).reshape((self.m_i,-1))
+#         print('phat',p_hat_old.shape)
+        z_t = np.array(self.data_history[-1]).reshape((1,-1))
+#         print('zt',z_t.shape)
         theta_me_t = (self.theta_history[-1]+self.u_history[-1]).reshape((self.d_i,-1))
-        theta_other_t = (self.theta_other_history[-1]).reshape((self.d-self.d_i,-1))
+#         print('thetame',theta_me_t.shape)
+        theta_other_t = (self.theta_other_history[-1]+self.u_other_history[-1]).reshape((self.d-self.d_i,-1))
+#         print('thetaother',theta_other_t.shape)
         theta_t = np.vstack((theta_me_t,theta_other_t))
+#         print('theta',theta_t.shape)
         p_hat_new = np.clip(p_hat_old + (self.nu/self.n)*np.dot(z_t - np.dot(p_hat_old,theta_t),theta_t.T), -self.R, self.R)
+#         print('pnew',p_hat_new.shape)
         self.p_hat_history.append(p_hat_new)
         return p_hat_new
     
@@ -78,7 +85,8 @@ class OnlinePlayer(object):
         theta_me_old = self.theta_history[-1]
         theta_other_old = self.theta_other_history[-1]
         theta_t = np.vstack((theta_me_old,theta_other_old))
-        q_k = np.array(self.q_history[-n:]).reshape((self.m_i,-1))
+        q_k = np.array(self.q_history[-self.n:]).reshape((self.m_i,-1))
         p_t = self.p_hat_history[-1]
         theta_me_new = np.clip(theta_me_old - (self.eta/self.n)*np.sum(oracle_grad), -self.R, self.R)
+        self.theta_history.append(theta_me_new)
         return theta_me_new

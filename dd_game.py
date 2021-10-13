@@ -127,34 +127,34 @@ class DecisionDependentGame(object):
 
         return self.theta_p1, self.theta_p2
     
-    def oracle_grad1(self):
+    def oracle_grad1(self, mu_hat, gamma_hat):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
         mu_hat = mu_p1
         gamma_hat = gamma_p1
         theta_me = self.theta_p1
         theta_other = self.theta_p2
-        grad = 0
+        grad = ((np.dot(mu_hat.T,theta_me)+np.dot(gamma_hat.T,theta_other))*mu_hat).reshape((-1,1)) + np.dot(cov_x_p1,(theta_me-beta_p1.reshape(-1,1)))
         return grad
     
-    def oracle_grad2(self):
+    def oracle_grad2(self, mu_hat, gamma_hat):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
         mu_hat = mu_p2
         gamma_hat = gamma_p2
         theta_me = self.theta_p2
         theta_other = self.theta_p1
-        grad = 0
+        grad = ((np.dot(mu_hat.T,theta_me)+np.dot(gamma_hat.T,theta_other))*mu_hat) + np.dot(cov_x_p2,(theta_me-beta_p2.reshape(-1,1)))
         return grad
         
     def oracle_z1(self):
         cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1 = self.p1_data_params
-        theta_me = self.theta_p1
-        theta_other = self.theta_p2
+        theta_me = self.p1.theta_history[-1]
+        theta_other = self.p2.theta_history[-1]
         z1 = sample_from_location_family(cov_x_p1, sigma_y_p1, beta_p1, mu_p1, gamma_p1, theta_me, theta_other)
         return z1
     
     def oracle_z2(self):
         cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2 = self.p2_data_params
-        theta_me = self.theta_p2
-        theta_other = self.theta_p1
+        theta_me = self.p2.theta_history[-1]
+        theta_other = self.p1.theta_history[-1]
         z2 = sample_from_location_family(cov_x_p2, sigma_y_p2, beta_p2, mu_p2, gamma_p2, theta_me, theta_other)
         return z2
