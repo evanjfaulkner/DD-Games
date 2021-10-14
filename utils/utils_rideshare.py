@@ -14,6 +14,7 @@ def sample_from_location_family_toy(g, mu, gamma, theta_me, theta_other, n=1):
 
 def location_family_demand_rideshare(g, mu, gamma, theta_me, theta_other):
     y = g + np.multiply(mu,theta_me) + np.multiply(gamma,theta_other)
+#     return(y)
     return np.maximum(y,np.zeros(y.shape)).reshape(-1,1)
 
 def sample_sphere(epsilon,d):
