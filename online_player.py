@@ -2,7 +2,7 @@ import numpy as np
 import ipdb
 import sys
 sys.path.append("./utils/")
-from utils_functions import grad_l
+from utils_functions import grad_l, solve_theta
 
 class OnlinePlayer(object):
     """
@@ -53,14 +53,14 @@ class OnlinePlayer(object):
         self.u_history.append(u_k)
         return theta_t, u_k
     
-    def compute_aux_q(self, z_k, theta_t_other, u_k_other):
-        self.data_history.append(z_k)
-        self.theta_other_history.append(theta_t_other)
-        self.u_other_history.append(u_k_other)
-        theta_other_k = theta_t_other+u_k_other
+    def compute_aux_q(self):
+        y = self.data_history[-1]
+        theta_other = self.theta_other_history[-1]
+        u_other = self.u_other_history[-1]
+        theta_other_k = theta_other+u_other
         p_hat_t = self.p_hat_history[-1]
         theta_k = self.theta_history[-1]+self.u_history[-1]
-        q_k = z_k-np.dot(p_hat_t,np.vstack((theta_k,theta_other_k)))
+        q_k = y-np.dot(p_hat_t,np.vstack((theta_k,theta_other_k)))
         self.q_history.append(q_k)
         return q_k
     
@@ -76,7 +76,9 @@ class OnlinePlayer(object):
 #         print('thetaother',theta_other_t.shape)
         theta_t = np.vstack((theta_me_t,theta_other_t))
 #         print('theta',theta_t.shape)
-        p_hat_new = np.clip(p_hat_old + (self.nu/self.n)*np.dot(z_t - np.dot(p_hat_old,theta_t),theta_t.T), -self.R, self.R)
+        A = theta_t.T
+        y = z_t.T
+        p_hat_new = np.clip((1-self.nu)*p_hat_old + (self.nu)*(np.linalg.pinv(A.T @ A) @ A.T @ y).T, -self.R, self.R)
 #         print('pnew',p_hat_new.shape)
         self.p_hat_history.append(p_hat_new)
         return p_hat_new
@@ -85,7 +87,7 @@ class OnlinePlayer(object):
         theta_me_old = self.theta_history[-1]
         theta_other_old = self.theta_other_history[-1]
         theta_t = np.vstack((theta_me_old,theta_other_old))
-        q_k = np.array(self.q_history[-self.n:]).reshape((self.m_i,-1))
+        q_k = np.array(self.q_history[-1]).reshape((self.m_i,-1))
         p_t = self.p_hat_history[-1]
         theta_me_new = np.clip(theta_me_old - (self.eta/self.n)*np.sum(oracle_grad), -self.R, self.R)
         self.theta_history.append(theta_me_new)
