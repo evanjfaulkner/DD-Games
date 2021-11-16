@@ -163,15 +163,11 @@ def find_qs(mu_hat, gamma_hat, z_lst, theta_me_lst, theta_other_lst):
     return np.array(q_lst)
 
 def solve_theta(x_lst, q, mu_hat, gamma_hat, theta_other):
-    y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(q.shape)
+    y_mod = q + np.dot(gamma_hat, theta_other)*np.ones(len(q))
     x_arr = np.array(x_lst)
     A = x_arr - mu_hat
     theta = np.linalg.pinv(A.T @ A) @ A.T @ y_mod
     return theta
-
-def grad_l(z_hat, theta):
-    grad = 0
-    return grad
 
 def solve_mu(z_lst, theta_me_lst):
     y = [e[1] for e in z_lst]
