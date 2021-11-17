@@ -140,3 +140,5 @@ cython_debug/
 # large data files
 .csv
 .json
+
+.DS_Store
